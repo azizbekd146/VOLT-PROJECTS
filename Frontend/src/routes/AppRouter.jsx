@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
@@ -16,45 +16,42 @@ import { ThemeProvider } from "../context/ThemeContext";
 
 const MainRouteWrapper = () => {
   const navigate = useNavigate();
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+  // State orqali login holatini boshqaramiz (shunda sahifa chalkashmaydi)
+  const [auth, setAuth] = useState(localStorage.getItem("isAuthenticated") === "true");
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const googleEmail = queryParams.get("email");
     const googleName = queryParams.get("name");
-    const googleRole = queryParams.get("role"); // <--- Backenddan kelgan rolni ham o'qiymiz
+    const googleRole = queryParams.get("role");
 
     if (googleEmail && googleName) {
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("user_name", decodeURIComponent(googleName));
       localStorage.setItem("user_email", googleEmail);
-
-      // Google orqali kirganda rolni saqlaymiz (agar kelmasa, vaqtincha admin deb ketamiz)
       localStorage.setItem("role", googleRole || "admin");
 
+      setAuth(true); // Tizimga kirdi deb holatni yangilaymiz
       window.history.replaceState({}, document.title, window.location.pathname);
       navigate("/", { replace: true });
     }
   }, [navigate]);
 
-  if (isAuthenticated) {
-    return <Home />;
-  }
-
-  return <Login />;
+  // Agar login qilgan bo'lsa Home sahifasiga, kirmagan bo'lsa Login sahifasiga yo'naltiramiz
+  return auth ? <Home /> : <Navigate to="/login" replace />;
 };
 
 // Himoyalangan sahifalar filtri (Profil, Savat kabilar uchun)
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-  return isAuthenticated ? children : <Navigate to="/" replace />;
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
 // Adminlar uchun maxsus filtr
 const AdminRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const isAdmin = localStorage.getItem("role") === "admin";
-  return isAuthenticated && isAdmin ? children : <Navigate to="/" replace />;
+  return isAuthenticated && isAdmin ? children : <Navigate to="/login" replace />;
 };
 
 export default function AppRouter() {
@@ -66,8 +63,11 @@ export default function AppRouter() {
             <ThemeProvider>
               <BrowserRouter>
                 <Routes>
-                  {/* Asosiy manzil ("/") kirgan/kirmaganlikka qarab Home yoki Loginni ko'rsatadi */}
+                  {/* Asosiy manzilga kirganda tekshiruv ishlaydi */}
                   <Route path="/" element={<MainRouteWrapper />} />
+
+                  {/* Login sahifasini alohida yo'nalish qilib belgilaymiz */}
+                  <Route path="/login" element={<Login />} />
 
                   <Route
                     path="/profile"
@@ -101,6 +101,9 @@ export default function AppRouter() {
                       </ProtectedRoute>
                     }
                   />
+
+                  {/* Noto'g'ri url yozilsa ham asosiysiga qaytarib yuboradi */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </BrowserRouter>
             </ThemeProvider>
