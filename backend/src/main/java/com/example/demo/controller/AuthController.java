@@ -10,12 +10,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-// CORS xatosi butunlay yo'qolishi uchun haqiqiy Vercel domeningiz va local serveringiz qo'shildi:
+// CORS muammosini butunlay yo'qotish uchun HAQIQIY nuqtali Vercel domeningiz va local portlar kiritildi:
 @CrossOrigin(
         origins = {
-                "https://volt-projects-vercel.app",
-                "http://localhost:5173",
-                "http://localhost:5174"
+                "https://volt-projects.vercel.app",   // Haqiqiy to'g'ri Vercel manzilingiz (Nuqta bilan!)
+                "http://localhost:5173",              // Local Frontend (Vite)
+                "http://localhost:5174"               // Qo'shimcha local port
         },
         allowCredentials = "true",
         allowedHeaders = "*",
