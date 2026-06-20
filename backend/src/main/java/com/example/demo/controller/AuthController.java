@@ -10,8 +10,17 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-// Vercel'dan keladigan so'rovlar bloklanmasligi uchun CORS ruxsati (barcha kompyuterlarda ishlashi uchun shart):
-@CrossOrigin(origins = "https://volt-projects.vercel.app", allowCredentials = "true")
+// CORS xatosi butunlay yo'qolishi uchun haqiqiy Vercel domeningiz va local serveringiz qo'shildi:
+@CrossOrigin(
+        origins = {
+                "https://volt-projects-vercel.app",
+                "http://localhost:5173",
+                "http://localhost:5174"
+        },
+        allowCredentials = "true",
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
+)
 public class AuthController {
 
     @Autowired
