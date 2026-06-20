@@ -1,0 +1,117 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Type roles — defined once, used everywhere instead of being redeclared
+   per-component (every component used to ship its own duplicate
+   @import/<style> block, which meant the same font request fired once per
+   component instance). */
+.font-display {
+  font-family: "Space Grotesk", sans-serif;
+}
+.font-body {
+  font-family: "Inter", sans-serif;
+}
+.font-mono {
+  font-family: "JetBrains Mono", monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #020617;
+}
+
+html.light {
+  color-scheme: light;
+}
+
+html.light body {
+  background-color: #f8fafc;
+}
+
+html.light .min-h-screen {
+  background-color: #f8fafc !important;
+}
+
+html.light .bg-slate-950 {
+  background-color: #f8fafc !important;
+}
+
+html.light .bg-slate-900 {
+  background-color: #f1f5f9 !important;
+}
+
+html.light .bg-slate-900\/40 {
+  background-color: rgba(241, 245, 249, 0.4) !important;
+}
+
+html.light .bg-slate-900\/60 {
+  background-color: rgba(241, 245, 249, 0.6) !important;
+}
+
+html.light .bg-slate-900\/80 {
+  background-color: rgba(241, 245, 249, 0.8) !important;
+}
+
+html.light .bg-slate-950\/60 {
+  background-color: rgba(248, 250, 252, 0.6) !important;
+}
+
+html.light .bg-slate-950\/80 {
+  background-color: rgba(248, 250, 252, 0.8) !important;
+}
+
+html.light .bg-slate-800 {
+  background-color: #e2e8f0 !important;
+}
+
+html.light .border-slate-800,
+html.light .border-slate-700 {
+  border-color: #cbd5e1 !important;
+}
+
+html.light .text-slate-50,
+html.light .text-slate-100,
+html.light .text-slate-950 {
+  color: #0f172a !important;
+}
+
+html.light .text-slate-200 {
+  color: #334155 !important;
+}
+
+html.light .text-slate-300 {
+  color: #475569 !important;
+}
+
+html.light .text-slate-400,
+html.light .text-slate-500 {
+  color: #64748b !important;
+}
+
+html.light .placeholder\:text-slate-500::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Visible keyboard focus everywhere, not just on elements that happen to
+   get :hover styling. */
+:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
