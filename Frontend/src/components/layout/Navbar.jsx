@@ -45,14 +45,16 @@ export default function Navbar({
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/products");
+        // `.env.local` dagi Railway manzilini o'qiydi, agar u yo'q bo'lsa fallback qilinadi
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+        const res = await fetch(`${baseUrl}/api/products`);
         if (res.ok) {
           const data = await res.json();
           setProducts(data);
           return;
         }
       } catch (e) {
-        // xato bo'lsa localdan o'qiydi
+        console.error("Xatolik yuz berdi, local xotiradan o'qiladi:", e);
       }
       const local = localStorage.getItem("volt_products");
       if (local) setProducts(JSON.parse(local));
@@ -69,10 +71,16 @@ export default function Navbar({
     )
     .slice(0, 5);
 
+  // Chiqish tugmasi to'liq ishlashi uchun handleLogout funksiyasi mukammallashtirildi
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("role");
+    // Brauzer xotirasidagi barcha ma'lumotlarni (token, role, auth holati) tozalaymiz
+    localStorage.clear();
+
+    // Foydalanuvchini bosh sahifaga (yoki login sahifasiga) yo'naltiramiz
     navigate("/");
+
+    // Sahifa to'liq yangilanib, eski sessiya qoldiqlari qolib ketmasligi uchun:
+    window.location.reload();
   };
 
   return (
@@ -231,7 +239,9 @@ export default function Navbar({
                       className="w-full text-left px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-700 transition-colors flex items-center gap-3"
                     >
                       <span className="uppercase text-xs font-bold text-slate-500">{l}</span>
-                      <span className="font-medium">{l === "uz" ? "O'zbek" : l === "ru" ? "Русский" : "English"}</span>
+                      <span className="font-medium">
+                        {l === "uz" ? "O'zbek" : l === "ru" ? "Русский" : "English"}
+                      </span>
                     </button>
                   ))}
               </div>
