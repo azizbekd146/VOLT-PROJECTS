@@ -16,7 +16,6 @@ import { ThemeProvider } from "../context/ThemeContext";
 
 const MainRouteWrapper = () => {
   const navigate = useNavigate();
-  // State orqali login holatini boshqaramiz (shunda sahifa chalkashmaydi)
   const [auth, setAuth] = useState(localStorage.getItem("isAuthenticated") === "true");
 
   useEffect(() => {
@@ -31,17 +30,16 @@ const MainRouteWrapper = () => {
       localStorage.setItem("user_email", googleEmail);
       localStorage.setItem("role", googleRole || "admin");
 
-      setAuth(true); // Tizimga kirdi deb holatni yangilaymiz
+      setAuth(true);
       window.history.replaceState({}, document.title, window.location.pathname);
       navigate("/", { replace: true });
     }
   }, [navigate]);
 
-  // Agar login qilgan bo'lsa Home sahifasiga, kirmagan bo'lsa Login sahifasiga yo'naltiramiz
   return auth ? <Home /> : <Navigate to="/login" replace />;
 };
 
-// Himoyalangan sahifalar filtri (Profil, Savat kabilar uchun)
+// Himoyalangan sahifalar filtri (Faqat tizimga kirganlar uchun)
 const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   return isAuthenticated ? children : <Navigate to="/login" replace />;
@@ -51,6 +49,8 @@ const ProtectedRoute = ({ children }) => {
 const AdminRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
   const isAdmin = localStorage.getItem("role") === "admin";
+
+  // Agar login qilmagan bo'lsa yoki admin bo'lmasa - login sahifasiga otib yuboradi
   return isAuthenticated && isAdmin ? children : <Navigate to="/login" replace />;
 };
 
@@ -63,12 +63,13 @@ export default function AppRouter() {
             <ThemeProvider>
               <BrowserRouter>
                 <Routes>
-                  {/* Asosiy manzilga kirganda tekshiruv ishlaydi */}
+                  {/* Asosiy sahifa */}
                   <Route path="/" element={<MainRouteWrapper />} />
 
-                  {/* Login sahifasini alohida yo'nalish qilib belgilaymiz */}
+                  {/* Login sahifasi alohida yozilishi shart */}
                   <Route path="/login" element={<Login />} />
 
+                  {/* Himoyalangan sahifalar */}
                   <Route
                     path="/profile"
                     element={
@@ -77,6 +78,8 @@ export default function AppRouter() {
                       </ProtectedRoute>
                     }
                   />
+
+                  {/* ADMIN SAHIFASI FAQAT ADMIN ROUTE ICHIDA */}
                   <Route
                     path="/admin"
                     element={
@@ -85,6 +88,7 @@ export default function AppRouter() {
                       </AdminRoute>
                     }
                   />
+
                   <Route
                     path="/gemini"
                     element={
@@ -102,7 +106,7 @@ export default function AppRouter() {
                     }
                   />
 
-                  {/* Noto'g'ri url yozilsa ham asosiysiga qaytarib yuboradi */}
+                  {/* Noto'g'ri url yozilsa asosiysiga qaytaradi */}
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </BrowserRouter>
