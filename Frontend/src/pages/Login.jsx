@@ -12,7 +12,6 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  // 1. GOOGLE-DAN QAYTGAN MA'LUMOTLARNI URL'DAN AVTOMAT O'QISH
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const googleEmail = queryParams.get("email");
@@ -58,8 +57,8 @@ export default function Login() {
     // ODDIY FOYDALANUVCHILARNI BACKEND'DAN TEKSHIRISH
     try {
       if (isRegister) {
-        // RO'YXATDAN O'TISH (REGISTER)
-        const response = await fetch("http://localhost:8080/api/register", {
+        // RO'YXATDAN O'TISH (REGISTER) - Railway havolasiga o'zgartirildi
+        const response = await fetch("https://volt-projects-production.up.railway.app/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ name, email, password }),
@@ -78,8 +77,8 @@ export default function Login() {
           setMessage({ type: "error", text: data.message || "Xatolik yuz berdi!" });
         }
       } else {
-        // TIZIMGA KIRISH (LOGIN)
-        const response = await fetch("http://localhost:8080/api/login", {
+        // TIZIMGA KIRISH (LOGIN) - Railway havolasiga o'zgartirildi
+        const response = await fetch("https://volt-projects-production.up.railway.app/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
@@ -110,9 +109,9 @@ export default function Login() {
     }
   };
 
-  // 3. GOOGLE TUGMASI BOSILGANDA BACKEND'GA YO'NALTIRISH
+  // 3. GOOGLE TUGMASI BOSILGANDA BACKEND'GA YO'NALTIRISH - Railway havolasiga o'zgartirildi
   const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = "https://volt-projects-production.up.railway.app/oauth2/authorization/google";
   };
 
   return (
