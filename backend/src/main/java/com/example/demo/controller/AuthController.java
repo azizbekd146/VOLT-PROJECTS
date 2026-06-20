@@ -1,4 +1,4 @@
-package com.example.demo.controller; // <-- XATOLIK SHU YERDA EDI: .controller qo'shildi!
+package com.example.demo.controller;
 
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
@@ -10,14 +10,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-// Vercel'dan keladigan so'rovlar bloklanmasligi uchun CORS ruxsati qo'shildi:
+// Vercel'dan keladigan so'rovlar bloklanmasligi uchun CORS ruxsati (barcha kompyuterlarda ishlashi uchun shart):
 @CrossOrigin(origins = "https://volt-projects.vercel.app", allowCredentials = "true")
 public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
 
-    // 1. RO'YXATDAN O'TISH -> Manzil: http://localhost:8080/api/register
+    // 1. RO'YXATDAN O'TISH
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody Map<String, String> userData) {
         String name = userData.get("name");
@@ -39,7 +39,7 @@ public class AuthController {
         User user = new User();
         user.setName(name.trim());
         user.setEmail(cleanEmail);
-        user.setPassword(password);
+        user.setPassword(password); // Kelajakda shifrlash (BCrypt) qo'shish tavsiya etiladi
 
         userRepository.save(user);
 
@@ -49,7 +49,7 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("status", "success", "message", "Ro'yxatdan o'tish muvaffaqiyatli yakunlandi! Tizimga kiring."));
     }
 
-    // 2. TIZIMGA KIRISH -> Manzil: http://localhost:8080/api/login
+    // 2. TIZIMGA KIRISH
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
@@ -64,7 +64,7 @@ public class AuthController {
         Optional<User> userOpt = userRepository.findByEmail(cleanEmail);
 
         if (userOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Foydalanuvchi topilmadi! Oldin ro'yxatdan o'ting."));
+            return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Foydalanuvchi topilmadi! Oldin ro'yxatdan o'teng."));
         }
 
         User user = userOpt.get();
@@ -77,7 +77,7 @@ public class AuthController {
                     "status", "success",
                     "message", "Xush kelibsiz, " + user.getName() + "!",
                     "name", user.getName(),
-                    "email", user.getEmail() // React localStorage'ga saqlashi uchun emailni ham qaytardik
+                    "email", user.getEmail()
             ));
         } else {
             return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Parol noto'g'ri!"));
