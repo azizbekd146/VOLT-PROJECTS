@@ -39,7 +39,7 @@ export default function Login() {
         localStorage.setItem("user_name", "Admin");
         localStorage.setItem("user_email", "admin@gmail.com");
         localStorage.setItem("role", "admin");
-
+``
         setMessage({
           type: "success",
           text: "Admin tizimda aniqlandi. Admin sahifasiga kirilmoqda...",
