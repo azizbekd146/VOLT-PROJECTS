@@ -10,9 +10,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-// Agar SecurityConfig'dagi CORS qandaydir sabab bilan React'ni bloklasa,
-// vaqtincha mana bu qatorni ochib qo'yishingiz mumkin:
-// @CrossOrigin(origins = "http://localhost:5173")
+// Vercel'dan keladigan so'rovlar bloklanmasligi uchun CORS ruxsati qo'shildi:
+@CrossOrigin(origins = "https://volt-projects.vercel.app", allowCredentials = "true")
 public class AuthController {
 
     @Autowired
