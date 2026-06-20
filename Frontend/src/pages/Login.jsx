@@ -27,19 +27,18 @@ export default function Login() {
     }
   }, []);
 
-  // TUGMA BOSILGANDA BACKEND'GA SO'ROV YUBORISH (REAL EFFEKT VA ADMIN BYPASS)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage({ type: "", text: "" });
 
-    // 🌟 ADMIN UCHUN PAROL TEKSHIRUVI (TO'G'RILANDI)
+    // ADMIN BYPASS
     if (!isRegister && email === "admin@gmail.com") {
       if (password === "Alabas78.") {
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("user_name", "Admin");
         localStorage.setItem("user_email", "admin@gmail.com");
-        localStorage.setItem("role", "admin"); // Admin huquqi
+        localStorage.setItem("role", "admin");
 
         setMessage({
           type: "success",
@@ -52,7 +51,6 @@ export default function Login() {
           window.location.reload();
         }, 1500);
       } else {
-        // Agar parol noto'g'ri bo'lsa, yuklanishni to'xtatamiz va xato chiqaramiz
         setIsLoading(false);
         setMessage({
           type: "error",
@@ -62,12 +60,11 @@ export default function Login() {
       return;
     }
 
-    // ODDIY FOYDALANUVCHILARNI BACKEND'DAN TEKSHIRISH
+    // ODDIY FOYDALANUVCHILAR (TO'G'RILANGAN JONLI BACKEND URL)
     try {
       if (isRegister) {
-        // RO'YXATDAN O'TISH (REGISTER)
         const response = await fetch(
-          "https://volt-projects-production.up.railway.app/api/register",
+          "https://volt-projects-production-e550.up.railway.app/api/register",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -88,12 +85,14 @@ export default function Login() {
           setMessage({ type: "error", text: data.message || "Xatolik yuz berdi!" });
         }
       } else {
-        // TIZIMGA KIRISH (LOGIN)
-        const response = await fetch("https://volt-projects-production.up.railway.app/api/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
-        });
+        const response = await fetch(
+          "https://volt-projects-production-e550.up.railway.app/api/login",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          }
+        );
         const data = await response.json();
 
         if (response.ok && data.status === "success") {
@@ -120,15 +119,15 @@ export default function Login() {
     }
   };
 
+  // TO'G'RILANGAN GOOGLE AUTH YO'NALTIRISH LINKI
   const handleGoogleLogin = () => {
     window.location.href =
-      "https://volt-projects-production.up.railway.app/oauth2/authorization/google";
+      "https://volt-projects-production-e550.up.railway.app/oauth2/authorization/google";
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white p-4">
       <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
-        {/* Sarlavha */}
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold">
             {isRegister ? "Yangi akkaunt yaratish" : "Tizimga kirish"}
@@ -140,7 +139,6 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Status Xabarlari */}
         {message.text && (
           <div
             className={`p-3 rounded-lg mb-4 flex items-center gap-2 text-sm ${
@@ -154,7 +152,6 @@ export default function Login() {
           </div>
         )}
 
-        {/* Forma */}
         <form onSubmit={handleSubmit} className="space-y-4">
           {isRegister && (
             <div>
@@ -222,7 +219,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Ajratuvchi chiziq */}
         <div className="relative my-5 text-center">
           <hr className="border-slate-800" />
           <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-900 px-3 text-xs text-slate-500">
@@ -230,7 +226,6 @@ export default function Login() {
           </span>
         </div>
 
-        {/* Google Tugmasi */}
         <button
           onClick={handleGoogleLogin}
           type="button"
@@ -240,7 +235,6 @@ export default function Login() {
           Google
         </button>
 
-        {/* Pastki o'tish havolasi */}
         <div className="text-center mt-5 text-xs text-slate-400">
           {isRegister ? "Akkauntingiz bormi? " : "Akkauntingiz yo'qmi? "}
           <button
