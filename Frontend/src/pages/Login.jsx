@@ -27,42 +27,53 @@ export default function Login() {
     }
   }, []);
 
-  // 2. TUGMA BOSILGANDA BACKEND'GA SO'ROV YUBORISH (REAL EFFEKT VA ADMIN BYPASS)
+  // TUGMA BOSILGANDA BACKEND'GA SO'ROV YUBORISH (REAL EFFEKT VA ADMIN BYPASS)
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage({ type: "", text: "" });
 
-    // 🌟 ADMIN UCHUN MAXSUS BIRDLIKDA KIRISH (TO'G'RILANDI)
+    // 🌟 ADMIN UCHUN PAROL TEKSHIRUVI (TO'G'RILANDI)
     if (!isRegister && email === "admin@gmail.com") {
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("user_name", "Admin");
-      localStorage.setItem("user_email", "admin@gmail.com");
-      localStorage.setItem("role", "admin"); // Admin huquqi
+      if (password === "Alabas78.") {
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("user_name", "Admin");
+        localStorage.setItem("user_email", "admin@gmail.com");
+        localStorage.setItem("role", "admin"); // Admin huquqi
 
-      setMessage({
-        type: "success",
-        text: "Admin tizimda aniqlandi. Admin sahifasiga kirilmoqda...",
-      });
+        setMessage({
+          type: "success",
+          text: "Admin tizimda aniqlandi. Admin sahifasiga kirilmoqda...",
+        });
 
-      setTimeout(() => {
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/admin");
+          window.location.reload();
+        }, 1500);
+      } else {
+        // Agar parol noto'g'ri bo'lsa, yuklanishni to'xtatamiz va xato chiqaramiz
         setIsLoading(false);
-        navigate("/admin"); // ✅ TO'G'RILANDI: Endi birdan admin dashboardga o'tadi!
-        window.location.reload();
-      }, 1500);
-
+        setMessage({
+          type: "error",
+          text: "Admin paroli noto'g'ri! Qaytadan urinib ko'ring.",
+        });
+      }
       return;
     }
 
     // ODDIY FOYDALANUVCHILARNI BACKEND'DAN TEKSHIRISH
     try {
       if (isRegister) {
-        // RO'YXATDAN O'TISH (REGISTER) - Railway havolasiga o'zgartirildi
-        const response = await fetch("https://volt-projects-production.up.railway.app/api/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, password }),
-        });
+        // RO'YXATDAN O'TISH (REGISTER)
+        const response = await fetch(
+          "https://volt-projects-production.up.railway.app/api/register",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password }),
+          }
+        );
         const data = await response.json();
 
         if (response.ok && data.status === "success") {
@@ -77,7 +88,7 @@ export default function Login() {
           setMessage({ type: "error", text: data.message || "Xatolik yuz berdi!" });
         }
       } else {
-        // TIZIMGA KIRISH (LOGIN) - Railway havolasiga o'zgartirildi
+        // TIZIMGA KIRISH (LOGIN)
         const response = await fetch("https://volt-projects-production.up.railway.app/api/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -109,9 +120,9 @@ export default function Login() {
     }
   };
 
-  // 3. GOOGLE TUGMASI BOSILGANDA BACKEND'GA YO'NALTIRISH - Railway havolasiga o'zgartirildi
   const handleGoogleLogin = () => {
-    window.location.href = "https://volt-projects-production.up.railway.app/oauth2/authorization/google";
+    window.location.href =
+      "https://volt-projects-production.up.railway.app/oauth2/authorization/google";
   };
 
   return (
@@ -192,7 +203,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Spinner yuklanish effekti */}
           <button
             type="submit"
             disabled={isLoading}

@@ -15,7 +15,7 @@ import { useLanguage } from "../context/LanguageContext";
 import { useCurrency } from "../context/CurrencyContext";
 import { Menu, X, ShoppingCart, User, LogOut, Settings } from "lucide-react";
 
-export default function Home({ theme = "dark", onThemeToggle = () => { } }) {
+export default function Home({ theme = "dark", onThemeToggle = () => {} }) {
   const { totalItems } = useCart();
   const { wishlist } = useWishlist();
   const [wishlistOpen, setWishlistOpen] = useState(false);
@@ -28,23 +28,27 @@ export default function Home({ theme = "dark", onThemeToggle = () => { } }) {
 
   const debouncedSearch = useDebounce(searchInput, 300);
 
+  // BACKEND JONLI MANZILI
+  const BACKEND_URL = "https://volt-projects-production.up.railway.app";
+
   useEffect(() => {
     let isBackendOffline = false;
-    // Har 2 soniyada backenddan buyurtmalar holatini tekshirib turish
+
     const fetchOrders = () => {
       const localOrders = JSON.parse(localStorage.getItem("volt_orders") || "[]");
       if (isBackendOffline) {
         setMyOrders(localOrders);
         return;
       }
-      fetch("http://localhost:5000/api/orders")
+      // Eski localhost manzili Railway manziliga almashtirildi
+      fetch(`${BACKEND_URL}/api/orders`)
         .then((res) => {
           if (!res.ok) throw new Error("Tarmoq xatosi");
           return res.json();
         })
         .then((data) => setMyOrders(data.length > 0 ? data : localOrders))
         .catch((err) => {
-          isBackendOffline = true; // Xato bo'lsa, konsolni to'ldirmaslik uchun so'rovni to'xtatamiz
+          isBackendOffline = true;
           setMyOrders(localOrders);
         });
     };
@@ -53,6 +57,18 @@ export default function Home({ theme = "dark", onThemeToggle = () => { } }) {
     const interval = setInterval(fetchOrders, 2000);
     return () => clearInterval(interval);
   }, []);
+
+  // TIZIMDAN TO'LIQ CHIQUVCHI FUNKSIYA
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("role");
+    localStorage.removeItem("user_name");
+    localStorage.removeItem("user_email");
+
+    setSidebarOpen(false);
+    // To'g'ridan-to'g'ri login sahifasiga otib yuboramiz
+    navigate("/login", { replace: true });
+  };
 
   return (
     <div className={`min-h-screen ${theme === "light" ? "bg-slate-50" : "bg-slate-950"}`}>
@@ -123,12 +139,9 @@ export default function Home({ theme = "dark", onThemeToggle = () => { } }) {
             </nav>
 
             <div className="pt-6 border-t border-slate-800 mt-auto">
+              {/* Tizimdan chiqish tugmasi handleLogout funksiyasiga ulandi */}
               <button
-                onClick={() => {
-                  localStorage.removeItem("isAuthenticated");
-                  localStorage.removeItem("role");
-                  navigate("/");
-                }}
+                onClick={handleLogout}
                 className="flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-sm font-medium text-rose-400 transition-colors hover:bg-rose-500/10 hover:text-rose-300"
               >
                 <LogOut className="h-5 w-5" /> Tizimdan chiqish
@@ -145,8 +158,8 @@ export default function Home({ theme = "dark", onThemeToggle = () => { } }) {
         onWishlistClick={() => setWishlistOpen(true)}
         searchValue={searchInput}
         onSearchChange={setSearchInput}
-        lang={lang} // Pass lang prop
-        switchLanguage={switchLanguage} // Pass switchLanguage prop
+        lang={lang}
+        switchLanguage={switchLanguage}
         theme={theme}
         onThemeToggle={onThemeToggle}
       />
@@ -169,9 +182,7 @@ export default function Home({ theme = "dark", onThemeToggle = () => { } }) {
       {myOrders.some((o) => o.status === "ready") && (
         <div className="fixed bottom-24 right-6 z-50 bg-cyan-500 text-slate-950 px-6 py-5 rounded-2xl shadow-2xl flex flex-col gap-2 max-w-sm animate-in slide-in-from-bottom-5">
           <h3 className="font-bold text-lg">🎉 Buyurtma qabul qilindi!</h3>
-          <p className="text-sm font-medium">
-            Tez orada admin sizga bog'lanadi.
-          </p>
+          <p className="text-sm font-medium">Tez orada admin sizga bog'lanadi.</p>
           <button
             onClick={() => {
               const readyOrder = myOrders.find((o) => o.status === "ready");
@@ -180,7 +191,8 @@ export default function Home({ theme = "dark", onThemeToggle = () => { } }) {
                   o.status === "ready" ? { ...o, status: "completed" } : o
                 );
                 localStorage.setItem("volt_orders", JSON.stringify(updatedOrders));
-                fetch(`http://localhost:5000/api/orders/${readyOrder.id}`, {
+                // Eski localhost manzili Railway manziliga almashtirildi
+                fetch(`${BACKEND_URL}/api/orders/${readyOrder.id}`, {
                   method: "PUT",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ status: "completed" }),
