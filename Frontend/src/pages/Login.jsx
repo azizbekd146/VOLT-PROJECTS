@@ -121,11 +121,6 @@ export default function Login() {
     }
   };
 
-  // TO'G'RILANGAN GOOGLE AUTH YO'NALTIRISH LINKI
-  const handleGoogleLogin = () => {
-    window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white p-4">
       <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl">
@@ -227,14 +222,13 @@ export default function Login() {
           </span>
         </div>
 
-        <button
-          onClick={handleGoogleLogin}
-          type="button"
+        <a
+          href={`${API_BASE_URL}/oauth2/authorization/google`}
           className="w-full bg-slate-950 hover:bg-slate-800 border border-slate-800 py-2.5 rounded-xl text-sm font-medium flex items-center justify-center gap-2 transition"
         >
           <Chrome size={16} className="text-rose-500" />
           Google
-        </button>
+        </a>
 
         <div className="text-center mt-5 text-xs text-slate-400">
           {isRegister ? "Akkauntingiz bormi? " : "Akkauntingiz yo'qmi? "}
