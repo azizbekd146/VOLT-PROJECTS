@@ -12,6 +12,9 @@ export default function Login() {
 
   const navigate = useNavigate();
 
+  // API URL - Buni kelajakda .env faylidan olish tavsiya qilinadi
+  const API_BASE_URL = "https://volt-projects-production-e550.up.railway.app";
+
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const googleEmail = queryParams.get("email");
@@ -39,7 +42,6 @@ export default function Login() {
         localStorage.setItem("user_name", "Admin");
         localStorage.setItem("user_email", "admin@gmail.com");
         localStorage.setItem("role", "admin");
-``
         setMessage({
           type: "success",
           text: "Admin tizimda aniqlandi. Admin sahifasiga kirilmoqda...",
@@ -64,7 +66,7 @@ export default function Login() {
     try {
       if (isRegister) {
         const response = await fetch(
-          "https://volt-projects-production-e550.up.railway.app/api/register",
+          `${API_BASE_URL}/api/register`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -86,7 +88,7 @@ export default function Login() {
         }
       } else {
         const response = await fetch(
-          "https://volt-projects-production-e550.up.railway.app/api/login",
+          `${API_BASE_URL}/api/login`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -121,8 +123,7 @@ export default function Login() {
 
   // TO'G'RILANGAN GOOGLE AUTH YO'NALTIRISH LINKI
   const handleGoogleLogin = () => {
-    window.location.href =
-      "https://volt-projects-production-e550.up.railway.app/oauth2/authorization/google";
+    window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
   };
 
   return (

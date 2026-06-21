@@ -1001,15 +1001,32 @@ export default function AdminDashboard() {
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  {t("modalLabelImage")}
+                  {t("modalLabelImage")} (Fayl tanlang)
                 </label>
                 <input
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-50 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
-                  placeholder={t("modalLabelImagePlaceholder")}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setFormData({ ...formData, image: reader.result });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className="w-full px-4 py-2.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-cyan-500 file:text-slate-950 hover:file:bg-cyan-400"
                 />
+                {formData.image && (
+                  <div className="mt-3 flex justify-center">
+                    <img 
+                      src={formData.image} 
+                      alt="Preview" 
+                      className="h-24 w-24 object-cover rounded-lg border border-slate-700 bg-slate-950" 
+                    />
+                  </div>
+                )}
               </div>
 
               <div>
