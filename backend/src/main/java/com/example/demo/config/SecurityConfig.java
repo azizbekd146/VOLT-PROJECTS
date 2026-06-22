@@ -21,12 +21,13 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Google'dan keladigan javobni ham o'tkazish uchun /login/** qo'shildi
-                        .requestMatchers("/", "/error", "/api/**", "/oauth2/**", "/login/**").permitAll()
+                        // Barcha kerakli yo'llarga, shu jumladan Google OAuth2 uchun ham ruxsat beramiz
+                        .requestMatchers("/", "/error", "/api/login", "/api/register", "/oauth2/**", "/login/oauth2/code/*").permitAll()
+                        // Qolgan barcha so'rovlar autentifikatsiya talab qiladi
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        // Muvaffaqiyatli autentifikatsiyadan so'ng /success manziliga yo'naltirish
+                        // Muvaffaqiyatli kirishdan so'ng /success manziliga yo'naltirish
                         .defaultSuccessUrl("/success", true)
                 );
 
