@@ -14,7 +14,7 @@ export default function Login() {
 
   // API URL - Buni kelajakda .env faylidan olish tavsiya qilinadi
   const API_BASE_URL = "https://volt-projects-production-e550.up.railway.app";
-
+ 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     const googleEmail = queryParams.get("email");
