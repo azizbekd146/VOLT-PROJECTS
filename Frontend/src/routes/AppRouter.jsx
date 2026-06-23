@@ -69,6 +69,9 @@ export default function AppRouter() {
                   {/* Login sahifasi alohida yozilishi shart */}
                   <Route path="/login" element={<Login />} />
 
+                  {/* Google OAuth2 dan keyin keluvchi route */}
+                  <Route path="/dashboard" element={<MainRouteWrapper />} />
+
                   {/* Himoyalangan sahifalar */}
                   <Route
                     path="/profile"

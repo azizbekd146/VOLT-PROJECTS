@@ -44,7 +44,7 @@ app.get("/api/orders", (req, res) => res.json(orders));
 app.post("/api/orders", (req, res) => {
     const newOrder = req.body;
     orders.unshift(newOrder); // Yangi buyurtmani tepaga joylaymiz
-    res.json(newOrder);
+    res.json(newOrder);x
 });
 
 app.put("/api/orders/:id", (req, res) => {

@@ -13,7 +13,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   // API URL - Buni kelajakda .env faylidan olish tavsiya qilinadi
-  const API_BASE_URL = "https://volt-projects-production-e550.up.railway.app";
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
  
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
