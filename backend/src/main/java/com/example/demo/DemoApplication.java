@@ -7,8 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -35,15 +33,5 @@ public class DemoApplication {
 		};
 	}
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurer() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-						.allowedOrigins("*") // Frontend manzili uchun ruxsat
-						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
-			}
-		};
-	}
+	// Bu yerdagi WebMvcConfigurer o'chirildi, chunki u SecurityConfig bilan to'qnash kelayotgan edi.
 }
