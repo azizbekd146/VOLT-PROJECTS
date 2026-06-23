@@ -4,18 +4,19 @@ import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-// CORS muammosini butunlay yo'qotish uchun HAQIQIY nuqtali Vercel domeningiz va local portlar kiritildi:
 @CrossOrigin(
         origins = {
-                "https://volt-projects.vercel.app",   // Haqiqiy to'g'ri Vercel manzilingiz (Nuqta bilan!)
-                "http://localhost:5173",              // Local Frontend (Vite)
-                "http://localhost:5174"               // Qo'shimcha local port
+                "https://volt-projects.vercel.app",
+                "http://localhost:5173",
+                "http://localhost:5174"
         },
         allowCredentials = "true",
         allowedHeaders = "*",
@@ -25,6 +26,9 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     // 1. RO'YXATDAN O'TISH
     @PostMapping("/register")
@@ -48,11 +52,12 @@ public class AuthController {
         User user = new User();
         user.setName(name.trim());
         user.setEmail(cleanEmail);
-        user.setPassword(password); // Kelajakda shifrlash (BCrypt) qo'shish tavsiya etiladi
+        // Parolni shifrlab saqlaymiz
+        user.setPassword(passwordEncoder.encode(password));
 
         userRepository.save(user);
 
-        System.out.println("====== BAZAGA YANGI FOYDALANUVCHI YOZILDI ======");
+        System.out.println("====== BAZAGA YANGI FOYDALANUVCHI YOZILDI (SHIFRLANGAN PAROL BILAN) ======");
         System.out.println("Email: " + cleanEmail);
 
         return ResponseEntity.ok(Map.of("status", "success", "message", "Ro'yxatdan o'tish muvaffaqiyatli yakunlandi! Tizimga kiring."));
@@ -78,7 +83,8 @@ public class AuthController {
 
         User user = userOpt.get();
 
-        if (user.getPassword().equals(password)) {
+        // Kiritilgan parol bilan bazadagi shifrlangan parolni solishtiramiz
+        if (passwordEncoder.matches(password, user.getPassword())) {
             System.out.println("====== FOYDALANUVCHI TIZIMGA KIRDI ======");
             System.out.println("Email: " + cleanEmail);
 
@@ -89,7 +95,7 @@ public class AuthController {
                     "email", user.getEmail()
             ));
         } else {
-            return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Parol noto'g'ri!"));
+            return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Email yoki parol noto'g'ri!"));
         }
     }
 }

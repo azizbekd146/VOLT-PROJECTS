@@ -4,9 +4,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
@@ -15,6 +16,12 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    // Parollarni shifrlash uchun Bean yaratamiz
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -22,13 +29,15 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Barcha kerakli yo'llarga, shu jumladan Google OAuth2 uchun ham ruxsat beramiz
-                        .requestMatchers("/", "/error", "/api/login", "/api/register", "/oauth2/**", "/login/oauth2/code/*").permitAll()
+                        .requestMatchers("/", "/error", "/api/login", "/api/register", "/oauth2/**", "/login/**").permitAll()
                         // Qolgan barcha so'rovlar autentifikatsiya talab qiladi
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         // Muvaffaqiyatli kirishdan so'ng /success manziliga yo'naltirish
                         .defaultSuccessUrl("/success", true)
+                        // Xatolik yuz berganda login sahifasiga xabar bilan qaytarish
+                        .failureUrl("/login?google-error=true")
                 );
 
         return http.build();
